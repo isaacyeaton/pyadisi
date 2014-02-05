@@ -8,6 +8,8 @@ This is a Python package for analyzing video data of animals
 (currently snakes) locomoting in a fluid. It is named after the flying
 tree snake C. paradisi (not a python).
 
+*Note*: Currently in alpha state and not suitable for research yet.
+
 Installation
 ------------
 
@@ -25,8 +27,10 @@ Features
 
 Very few features so far:
 
-- DLT
+- DLT 
 
 ### TODO List
 
-- load in movie files
+- load in movie/image files
+- multicamera cv
+- point selection in images

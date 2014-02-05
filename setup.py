@@ -3,7 +3,7 @@ try:
 except ImportError:
     from distutils.core import setup
 
-DESCRIPTION = "A Python package fro animal locomotion studies"
+DESCRIPTION = "A Python package for animal locomotion studies"
 LONG_DESCRIPTION = DESCRIPTION
 NAME = "pyadisi"
 AUTHOR = "Isaac J. Yeaton"
