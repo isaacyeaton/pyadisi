@@ -26,7 +26,7 @@ def find_objp(girdsize, dims):
     -------
     npts : int
         Number of grid calibration points
-    objp : array (npts x 3)
+    objp : list of an array array (npts x 3)
         Physical location of the circles or corners in a plane.
     """
 
@@ -35,7 +35,7 @@ def find_objp(girdsize, dims):
     objp = np.zeros((dims[0] * dims[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:dims[0], 0:dims[1]].T.reshape(-1, 2)
 
-    return npts, objp * gridsize
+    return npts, [objp * gridsize]
 
 
 def _find_circles(img, dims):
@@ -109,9 +109,61 @@ def single_calibrate(objp, imgp, shape):
 
     # get the correct number of object points
     if len(objp) == 1:
-        objp = [objp for _ in range(len(imgp))]
+        #objp = [objp for _ in range(len(imgp))]
+        objp = objp * len(imgp)
 
     rms, intmtx, dist, rvecs, tvecs = cv2.calibrateCamera(objp, imgp, shape[::-1], None, None)
 
     return rms, intmtx, dist, rvecs, tvecs
 
+
+def new_int_matrix(intmxt, dist, shape):
+    """Get the optimal camera matrix and region of interest.
+    """
+
+    newintmtx, roi = cv2.getOptimalNewCameraMatrix(intmxt, dist, shape, 1, shape)
+
+    return newintmtx, roi
+
+
+def save_single_cal(params):
+    """
+    """
+    pass
+
+
+def stereo_calibrate(objp, imgp1, imgp2, intmtx1, intmtx2, dist1, dist2, shape):
+    """Stereo calibrate the cameras.
+
+    Parameters
+    ----------
+    calibration dictionaries
+    """
+
+    if len(objp) == 1:
+        objp = objp * len(imgp1)
+
+    stereo_cal = cv2.stereoCalibrate(objectPoints=objp,
+                                     imagePoints1=imgp1,
+                                     imagePoints2=imgp2,
+                                     cameraMatrix1=intmtx1,
+                                     distCoeffs1=dist1,
+                                     cameraMatrix2=intmtx2,
+                                     distCoeffs2=dist2,
+                                     imageSize=shape,
+                                     flags=(cv2.CALIB_FIX_INTRINSIC))
+    strms, int1, dis1, int2, dis2, R, T, E, F = stereo_cal
+
+    return strms, R, T, E, F
+
+
+def stereo_rectify(intmtx1, intmtx2, dist1, dist2, R, T, shape, alpha=-1):
+    """Add docts...
+    """
+    stereo = cv2.stereoRectify(cameraMatrix1=mtx1, cameraMatrix2=mtx2,
+                               distCoeffs1=dist1, distCoeffs2=dist2,
+                               imageSize=shape1[::-1], R=R, T=T, R1=None, R2=None, P1=None, P2=None, Q=None,
+                               flags=cv2.CALIB_ZERO_DISPARITY, alpha=alpha, newImageSize=(0, 0))
+    R1, R2, P1, P2, Q, validpixROI1, validpixROI1 = stereo
+
+    return R1, R2, P1, P2, Q, validpixROI1, validpixROI1
