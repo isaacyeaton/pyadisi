@@ -186,3 +186,27 @@ def stereo_rectify(intmtx1, intmtx2, dist1, dist2, R, T, shape, alpha=-1, newsiz
     R1, R2, P1, P2, Q, roi1, roi2 = stereo
 
     return R1, R2, P1, P2, Q, roi1, roi2
+
+
+def dlt_coeffs(intmtx, R, T):
+    """DLT coefficients given the rotation matrix and
+    translation vector from stere_calibrate.
+
+    Parameters
+    ----------
+    intmtx : array
+        intrinsic camera matrix
+    R : array
+        3 x 3 rotation matrix
+    T : array
+        translation vector
+
+    Returns
+    -------
+    L : array
+        12 DLT coefficients
+
+    Note that the DLT algorithm will use the correct 11 of them
+    """
+
+    return np.dot(intmtx, np.c_[R, T]).flatten()#[:-1]
