@@ -10,7 +10,7 @@ import functools
 from multiprocessing import Pool
 
 
-def find_objp(girdsize, dims):
+def find_objp(gridsize, dims):
     """Make an array of the object points for the grid.
 
     Parameters
@@ -30,22 +30,12 @@ def find_objp(girdsize, dims):
         Physical location of the circles or corners in a plane.
     """
 
-    npts = width * height
+    npts = dims[0] * dims[1]
 
     objp = np.zeros((dims[0] * dims[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:dims[0], 0:dims[1]].T.reshape(-1, 2)
 
     return npts, [objp * gridsize]
-
-
-def _find_circles(img, dims):
-    """Find the circle grid locations from an image.
-
-    """
-
-    ret, circ = cv2.findCirclesGrid(img, dims, flags=cv2.CALIB_CB_SYMMETRIC_GRID)
-
-    return ret, circ
 
 
 def load_images(path, func):
@@ -57,6 +47,15 @@ def load_images(path, func):
 
     return map(_loader, path)
 
+
+def _find_circles(img, dims):
+    """Find the circle grid locations from an image.
+
+    """
+
+    ret, circ = cv2.findCirclesGrid(img, dims, flags=cv2.CALIB_CB_SYMMETRIC_GRID)
+
+    return ret, circ
 
 def parallel_circ_find(images, dims, nproc=4):
     """Use multiprocessing module to find circle pattern
@@ -79,18 +78,33 @@ def parallel_circ_find(images, dims, nproc=4):
         Index of images where grid could not be found
     """
 
-    find_circles = functools.partial(find_circ, dims=dims)
+    find_circles = functools.partial(_find_circles, dims=dims)
 
     p = Pool(nproc)
     c = p.map(find_circles, images)
     c = np.array(c)
 
-    bad = np.where(c[:, 0] == False)
-    good = np.where(c[:, 0] == True)
+    bad = np.where(c[:, 0] == False)[0]
+    good = np.where(c[:, 0] == True)[0]
     circs = c[:, 1]  # c[good, 1]
 
     return circs, good, bad
 
+def centers_array(circs):
+    """Get the circe locations in a form to plot. This takes the `circs'
+    output from parallel_circ_find.
+
+    Parameters
+    ----------
+    circs : array of arrays
+
+    Returns
+    -------
+    centers : array
+        array that has the centers as a 2D array
+    """
+
+    return np.array([var.flatten().reshape(-1, 2) for var in circs])
 
 def valid_stereo_pairs(good1, good2, bad1, bad2):
     """Select indices and points for the stereo calibration. These
@@ -150,20 +164,25 @@ def stereo_calibrate(objp, imgp1, imgp2, intmtx1, intmtx2, dist1, dist2, shape):
                                      distCoeffs1=dist1,
                                      cameraMatrix2=intmtx2,
                                      distCoeffs2=dist2,
-                                     imageSize=shape,
+                                     imageSize=shape[::-1],
                                      flags=(cv2.CALIB_FIX_INTRINSIC))
     strms, int1, dis1, int2, dis2, R, T, E, F = stereo_cal
+    assert(np.allclose(intmtx1, int1))
+    assert(np.allclose(intmtx2, int2))
+    assert(np.allclose(dist1, dis1))
+    assert(np.allclose(dist2, dis2))
 
     return strms, R, T, E, F
 
 
-def stereo_rectify(intmtx1, intmtx2, dist1, dist2, R, T, shape, alpha=-1):
-    """Add docts...
+def stereo_rectify(intmtx1, intmtx2, dist1, dist2, R, T, shape, alpha=-1, newsize=(0, 0)):
+    """Add docs...
     """
-    stereo = cv2.stereoRectify(cameraMatrix1=mtx1, cameraMatrix2=mtx2,
+    stereo = cv2.stereoRectify(cameraMatrix1=intmtx1, cameraMatrix2=intmtx2,
                                distCoeffs1=dist1, distCoeffs2=dist2,
-                               imageSize=shape1[::-1], R=R, T=T, R1=None, R2=None, P1=None, P2=None, Q=None,
-                               flags=cv2.CALIB_ZERO_DISPARITY, alpha=alpha, newImageSize=(0, 0))
-    R1, R2, P1, P2, Q, validpixROI1, validpixROI1 = stereo
+                               imageSize=shape[::-1], R=R, T=T, R1=None, R2=None,
+                               P1=None, P2=None, Q=None, flags=cv2.CALIB_ZERO_DISPARITY,
+                               alpha=alpha, newImageSize=newsize)
+    R1, R2, P1, P2, Q, roi1, roi2 = stereo
 
-    return R1, R2, P1, P2, Q, validpixROI1, validpixROI1
+    return R1, R2, P1, P2, Q, roi1, roi2
