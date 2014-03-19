@@ -181,7 +181,7 @@ def stereo_rectify(intmtx1, intmtx2, dist1, dist2, R, T, shape, alpha=-1, newsiz
     stereo = cv2.stereoRectify(cameraMatrix1=intmtx1, cameraMatrix2=intmtx2,
                                distCoeffs1=dist1, distCoeffs2=dist2,
                                imageSize=shape[::-1], R=R, T=T, R1=None, R2=None,
-                               P1=None, P2=None, Q=None, flags=cv2.CALIB_ZERO_DISPARITY,
+                               P1=None, P2=None, Q=None, # flags=cv2.CALIB_ZERO_DISPARITY,
                                alpha=alpha, newImageSize=newsize)
     R1, R2, P1, P2, Q, roi1, roi2 = stereo
 
