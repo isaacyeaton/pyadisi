@@ -36,6 +36,9 @@ class CamPicker2D(object):
         self.frame_num = start_frame
         self.point_num = 0
 
+        # if we want thresholding or not
+        self._use_thresholding = dict(cam1=False, cam2=False)
+
         self.setup_figure()
 
     def setup_figure(self):
@@ -103,11 +106,24 @@ class CamPicker2D(object):
         self._ax_gamma = plt.axes([.09, .075, 0.375, .025])
         self.gam_slider = widgets.Slider(self._ax_gamma, 'gamma', 0, 2, valinit=1, color='#AAAAAA')#, picker=agamma)
 
+        self._ax_button = plt.axes([0.6, 0.1, 0.1, 0.1])
+        self.cb_button = widgets.CheckButtons(self._ax_button,
+                                              ('cam1', 'cam2'),
+                                              (False, False))
+        self.cb_button.on_clicked(self._cb_button_clicked)
+
         self.fig.canvas.mpl_disconnect(self.fig.canvas.manager.key_press_handler_id)
         self.fig.canvas.mpl_connect('button_press_event', self.on_button_press)
         self.fig.canvas.mpl_connect('key_press_event', self.on_key_press)
         self.fig.canvas.mpl_connect('scroll_event', self.on_scroll)
         #fig.canvas.mpl_connect('pick_event', self.on_pick)
+
+    def _cb_button_clicked(self, label):
+        """Whether we are turning off Otsu thresholding."""
+        if label == 'cam1':
+            self._use_thresholding['cam1'] = not self._use_thresholding['cam1']
+        if label == 'cam2':
+            self._use_thresholding['cam2'] = not self._use_thresholding['cam2']
 
     def _pix(self):
         return np.round(self.pix_slider.val).astype(np.int)
@@ -177,6 +193,13 @@ class CamPicker2D(object):
 
         if event.inaxes == self.ax1:
             x, y = event.xdata, event.ydata
+
+            # see if we want to just have the values
+            if self._use_thresholding['cam1']:
+                self.data['cam1'][self.point_num, self.frame_num, :] = [y, x]
+                plt.draw()
+                return
+
             pix = self._pix()
             img = self.cam1[self.frame_num]
             subimg = img[y-pix:y+pix, x-pix:x+pix]  #TODO
@@ -208,6 +231,13 @@ class CamPicker2D(object):
 
         if event.inaxes == self.ax2:
             x, y = event.xdata, event.ydata
+
+            # see if we want to just have the values
+            if self._use_thresholding['cam2']:
+                self.data['cam2'][self.point_num, self.frame_num, :] = [y, x]
+                plt.draw()
+                return
+
             pix = self._pix()
             img = self.cam2[self.frame_num]
             subimg = img[y-pix:y+pix, x-pix:x+pix]  #TODO
@@ -238,14 +268,15 @@ class CamPicker2D(object):
             #TODO since we update the point each time, and not the com, this will start to do
             #weird things; make it so they can only click once?
             xc, yc = self.data['cam1'][self.point_num, self.frame_num, :]
-            x, y = event.xdata, event.ydata
+            y, x = event.xdata, event.ydata
             comx = xc - x + self._pix()
             comy = yc - y + self._pix()
-
-            self.ax3.plot(x, y, 'r+', **self.com_args)
-            self.ax4.plot(x, y, 'r+', **self.com_args)
-
             com = np.array([comx, comy])
+            print com
+
+            self.ax3.plot(com[1], com[0], 'r+', **self.com_args)
+            self.ax4.plot(com[1], com[0], 'r+', **self.com_args)
+
             self.data['cam1'][self.point_num, self.frame_num, :] = com
             #TODO to see this, uncomment below
             #print com
@@ -254,14 +285,14 @@ class CamPicker2D(object):
             #TODO since we update the point each time, and not the com, this will start to do
             #weird things; make it so they can only click once?
             xc, yc = self.data['cam2'][self.point_num, self.frame_num, :]
-            x, y = event.xdata, event.ydata
+            y, x = event.xdata, event.ydata
             comx = xc - x + self._pix()
             comy = yc - y + self._pix()
-
-            self.ax5.plot(x, y, 'r+', **self.com_args)
-            self.ax6.plot(x, y, 'r+', **self.com_args)
-
             com = np.array([comx, comy])
+
+            self.ax5.plot(com[1], com[0], 'r+', **self.com_args)
+            self.ax6.plot(com[1], com[0], 'r+', **self.com_args)
+
             self.data['cam2'][self.point_num, self.frame_num, :] = com
             #TODO to see this, uncomment below
             #print com
