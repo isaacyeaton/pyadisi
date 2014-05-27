@@ -1,4 +1,4 @@
-from atom.api import Atom, Unicode, Range, Bool, Value, Int, Tubple, observe
+from atom.api import Atom, Unicode, Range, Bool, Value, Int, Tuple, observe
 import enaml
 from enaml.qt.qt_application import QtApplication
 
