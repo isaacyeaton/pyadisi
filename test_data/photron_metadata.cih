@@ -1,0 +1,188 @@
+#Camera Information Header
+Date : 2014/5/29
+Time : 13:39
+Camera Type : FASTCAM-APX RS model 250K
+Head Type : Unknown Child Device
+Camera ID : 11
+Camera Number : 1
+Head Number : 1
+Max Head Number : 1
+Scene Name : 
+User Defined Camera Name : 
+Session Number : 
+Date Record : Unknown
+Time Record : Unknown
+Trigger Time : 0
+Record Rate(fps) : 500
+Shutter Speed(s) : 1/5000
+Trigger Mode : End
+Original Total Frame : 6144
+Total Frame : 1119
+Start Frame : -1118
+Correct Trigger Frame : 1
+Save Step : 1
+Image Width : 1024
+Image Height : 1024
+Color Type : Mono
+Color Bit : 16
+File Format : MRaw
+EffectiveBit Depth : 10
+EffectiveBit Side : Higher
+Partition Number: 1
+Digits Of File Number : 6
+Comment Text : 
+Shutter Type2(nsec) : 200254
+Edge Enhance : 0
+Pre LUT Mode : DEF1
+Pre LUT Brightness : 0
+Pre LUT Contrast : 0
+Pre LUT Gain : 1.0
+Pre LUT Gamma : 1.00
+Pre LUT PosiNega : Posi
+DS Shutter : Off
+Scale Method : 0
+Scale Grid Space : 10
+Scale Pixel Size : 1.0000
+Scale Unit : 0
+Scale Magnification : 1.0000
+Scale Ruler : 10
+Scale Distance : 1.0000
+Scale 2Points Distance : 1.0000
+Polarization : 0
+Pola Config : 0
+Pola Save Kind : 0
+Pola Save Comment : 
+Time Code Type : 0
+Time Code Display Unit : 
+Time Code Per Frames : 0.000000
+Time Code Unit Reset : 0.000000
+Time Code Reset : 0
+Current Time Decimal Place : 0
+Current Time Max Display Unit : 0
+Current Time Decimal Divide : 0
+Not Use : 
+Not Use : 
+Not Use : 
+Auto Exposure : Off
+Shading : On
+Pixel Gain : Default
+Sync In : OFF
+General In : EVENT POS
+General Out1 : SYNC POS
+General Out2 : EXPOSE POS
+MCDL : Off
+IRIG : Off
+Video Out : NTSC
+Total Partition : 1
+Current Partition : 1
+Partition 1 : 6144(frame)
+Hardware Partition Increment Mode : Off
+Locked Shutter Speed : Off
+
+#Photron Fastcam Viewer Version Information:
+Saved Date : 2014/5/29
+Saved Time : 13:47
+PFV.exe : 3, 3, 9, 1
+1024PCIInst.exe : 1.1.0.0
+512PCIInst.exe : 1.1.0.0
+D1024PCI.dll : 1, 0, 3, 3
+D512PCI.dll : 1, 0, 2, 2
+DAPX.dll : 1, 0, 2, 5
+DAPXRS.dll : 1, 0, 4, 4
+DBC2.dll : 1, 0, 1, 7
+DIDPEX.dll : 1, 0, 4, 0
+DMC1.dll : 1, 0, 3, 8
+DMH4.dll : 1, 0, 3, 9
+DSA1.dll : 1, 0, 6, 2
+DSA2.dll : 1, 0, 4, 9
+DSA3.dll : 1, 0, 5, 8
+DSA4.dll : 1, 0, 2, 1
+DSA5.dll : 1, 0, 4, 5
+DSA6.dll : 1, 0, 1, 1
+DSA7.dll : 1, 0, 2, 5
+DSA8.dll : 1, 0, 2, 8
+DSAX.dll : 1, 0, 2, 0
+DSAX_B.dll : 1, 0, 3, 6
+DUL512.dll : 1, 0, 2, 6
+FSDCTRL.dll : 1, 0, 0, 1
+GEthLib.dll : 0, 1, 2, 8
+I1394.dll : 1, 0, 0, 7
+IGETHER.dll : 1, 0, 3, 0
+ijl15.dll : 1,51,12,44
+IOPTICAL.dll : 1, 0, 0, 6
+IPCI.dll : 1, 0, 0, 8
+ippcc-6.1.dll : 6,1,137,734
+ippccp8-6.1.dll : 6,1,137,734
+ippccpx-6.1.dll : 6,1,137,734
+ippccs8-6.1.dll : 6,1,137,734
+ippcct7-6.1.dll : 6,1,137,734
+ippccv8-6.1.dll : 6,1,137,734
+ippccw7-6.1.dll : 6,1,137,734
+ippcore-6.1.dll : 6,1,137,790
+ippcv-6.1.dll : 6,1,137,811
+ippcvp8-6.1.dll : 6,1,137,811
+ippcvpx-6.1.dll : 6,1,137,811
+ippcvs8-6.1.dll : 6,1,137,811
+ippcvt7-6.1.dll : 6,1,137,811
+ippcvv8-6.1.dll : 6,1,137,811
+ippcvw7-6.1.dll : 6,1,137,811
+ippi-6.1.dll : 6,1,137,825
+ippip8-6.1.dll : 6,1,137,825
+ippipx-6.1.dll : 6,1,137,825
+ippis8-6.1.dll : 6,1,137,825
+ippit7-6.1.dll : 6,1,137,825
+ippiv8-6.1.dll : 6,1,137,825
+ippiw7-6.1.dll : 6,1,137,825
+libguide40.dll : 20071022
+libiomp5md.dll : 20071022
+libpng13.dll : 1.2.12
+PDCLIB.dll : 1, 1, 3, 9
+PDCPOLA.dll : 1, 0, 1, 0
+PICLIB.dll : 1, 0, 6, 7
+PluginCamera.dll : 1.3.9.1
+PluginDataSave.dll : 1.3.9.1
+PluginFileView.dll : 1.3.9.1
+RET_CALC.dll : 1.0.0.3
+zlib1.dll : 1.2.3
+PluginAngle.pdll : 1.1.9.6
+PluginBatchDataConverter.pdll : 1.0.0.3
+PluginComm.pdll : 1.0.1.1
+PluginCycleView.pdll : 1, 0, 0, 1
+PluginDistance.pdll : 1.1.9.4
+PluginHDR.pdll : 1, 0, 0, 2
+PluginHistogram.pdll : 1, 0, 5, 3
+PluginLensControl.pdll : 1, 0, 3, 0
+PluginLineProfile.pdll : 1, 0, 2, 5
+PluginMotionDetector.pdll : 1, 0, 0, 1
+PluginPIVFocusMode.pdll : 1, 0, 0, 1
+PluginPolarization.pdll : 1.0.0.7
+PluginPseudoColor.pdll : 1, 0, 0, 2
+
+#System Information:
+OS : Windows XP Professional Service Pack 3  (version 5.1 Build 2600)
+Memory : 3509MB RAM
+Processor : Intel(R) Core(TM) i7 CPU       M 620  @ 2.67GHz
+DirectX : DirectX 11
+
+#Device Information:
+Number of devices : 2
+
+#Device 1:
+Device Name : FASTCAM-APX RS model 250K
+Device ID : 010
+Interface : Gigabit Ethernet
+IP Address : 192.168.0.10
+Subnet Mask : 255.255.255.0
+Gateway Address : 192.168.0.50
+Firmware : 2.02
+
+#Device 2 (Current):
+Device Name : FASTCAM-APX RS model 250K
+Device ID : 011
+Interface : Gigabit Ethernet
+IP Address : 192.168.0.11
+Subnet Mask : 255.255.255.0
+Gateway Address : 0.0.0.0
+Firmware : 2.01
+
+ENDÿ
