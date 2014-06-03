@@ -29,11 +29,11 @@ def fastec(fname):
     config = {}
     for idx, line in enumerate(lines):
         if line.startswith('['):
-            print line
             param = line[1:-2]
             d = {}
         if line.startswith('\t'):
-            key, val = line[1:-1].split('=')
+            line = line.strip('\t').strip('\n')
+            key, val = line.split('=')
             if val.isdigit():  # this will be a number
                 val = _s2n(val)
             elif val.startswith('['):  # this will be a list
@@ -63,19 +63,23 @@ def photron(fname):
         lines = fp.readlines()
 
     config = {}
+    start = False
     for idx, line in enumerate(lines):
-        if line.startswith('['):
+        if line.startswith('#'):
             print line
             param = line[1:-2]
             d = {}
-        if line.startswith('\t'):
-            key, val = line[1:-1].split('=')
+            start = True
+        if start:
+            line = line.strip('\r\n')
+            key, val = line.split(':')
             if val.isdigit():  # this will be a number
                 val = _s2n(val)
-            elif val.startswith('['):  # this will be a list
-                val = map(_s2n, val[1:-1].split(','))
+            #elif val.startswith('['):  # this will be a list
+            #    val = map(_s2n, val[1:-1].split(','))
             d[key] = val
-        if line.startswith('\n') or idx == len(lines) - 1:
+        if line.startswith('END') or idx == len(lines) - 1:
             config[param] = d
+            start = False
 
-    return lines
+    return config
