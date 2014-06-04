@@ -14,7 +14,7 @@ import time
 import cPickle as pik
 
 class ImSeq:
-    """An easy way to access all the frog images in a directory"""
+    """An easy way to access all the images in a directory"""
     def __init__(self, path, basename, loop=False, wantgray=False, note=''):
         self.path = path
         if self.path[-1] is not os.sep:
