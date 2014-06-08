@@ -1,5 +1,6 @@
 pyadisi/bat_study
 *.mov  #TODO figure out what to do with video files...
+*.npy
 *.avi
 *.MOV
 *.trackpy_buffer
