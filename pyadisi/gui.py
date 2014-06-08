@@ -15,6 +15,137 @@ import sys
 
 
 
+class Spliner(object):
+
+    def __init__(self, vid, start=0, dd=None):
+        self.vid = vid
+        self.nframes = len(vid)
+        self.frame_num = start
+
+        # where to store the traces in
+        if dd is None:
+            self.dd = {}
+        else:
+            self.dd = dd
+        #self.dd[self.frame_num] = []
+
+        self.setup_figure()
+
+
+    def setup_figure(self):
+
+        self.fig, self.ax = plt.subplots()
+        #self.fig = plt.figure()
+        #self.ax = plt.axes([.25, .15, .7, .7])
+        plt.subplots_adjust(left=0.325)
+        self.p1 = self.ax.imshow(self.vid[self.frame_num], interpolation='lanczos')
+        #self.p1 = self.ax.imshow(self.vid[self.frame_num] - self.vid[self.frame_num - 1], interpolation='lanczos')
+
+        self.line, = self.ax.plot([], [], 'ro', markeredgecolor='none', alpha=.9)
+        self.mouse_down = False
+
+        self._txt = 'frame {0:3d}'
+        self.t1 = self.ax.set_title(self._txt.format(self.frame_num), fontsize=14)
+
+        self.interpolations = ('nearest', 'bilinear', 'bicubic', 'spline16', 'spline36',
+                               'hanning', 'hamming', 'hermite', 'kaiser', 'quadric', 'catrom',
+                               'gaussian', 'bessel', 'mitchell', 'sinc', 'lanczos')
+
+        self.rax = plt.axes([0.05, 0.15, 0.15, 0.75], axisbg='lightgoldenrodyellow')
+        self.radio = widgets.RadioButtons(self.rax, self.interpolations, 15)
+        self.radio.on_clicked(self._interpolation_func)
+
+        self.ax.axis('image')
+
+        self.fig.set_facecolor('w')
+        self.fig.canvas.mpl_disconnect(self.fig.canvas.manager.key_press_handler_id)
+        #self.fig.canvas.mpl_connect('button_press_event', self.on_button_press)
+        self.fig.canvas.mpl_connect('key_press_event', self.key_press)
+        self.fig.canvas.mpl_connect('button_press_event', self.button_press)
+        self.fig.canvas.mpl_connect('button_release_event', self.button_release)
+        self.fig.canvas.mpl_connect('motion_notify_event', self.motion_notify)
+
+        self.update()
+        self.plot_marker()
+
+    def _interpolation_func(self, interp_idx):
+        #self.p1.set_interpolation(self.interpolations[interp_idx])
+        self.p1.set_interpolation(interp_idx)
+        plt.draw()
+
+    def key_press(self, event):
+        key = event.key
+        print('here')
+        if key == 'l' or key == 'right':
+            self.frame_num += 1
+            if self.frame_num > self.nframes:
+                self.frame_num = self.nframes - 1
+        if key == 'h' or key == 'left':
+            self.frame_num -= 1
+            if self.frame_num < 0:
+                self.frame_num = 0
+
+        self.update()
+        self.plot_marker()
+
+    def update(self):
+        self.p1.set_data(self.vid[self.frame_num])
+        #self.p1.set_data(self.vid[self.frame_num] - self.vid[self.frame_num] - 1)
+        self.t1.set_text(self._txt.format(self.frame_num))
+
+        plt.draw()
+
+    def plot_marker(self):
+        if self.dd.has_key(str(self.frame_num)):
+            dplot = np.array(self.dd[str(self.frame_num)])
+            self.line.set_data(dplot.T)
+        else:
+            self.line.set_data(([], []))
+
+        plt.draw()
+
+    def button_press(self, event):
+        # check if using zoom or pan tool; stackoverflow.com/q/20711148
+        if not self.fig.canvas.manager.toolbar._active == None:
+            return
+        if event.inaxes != self.ax:
+            return
+
+        if event.button == 1:
+            self.mouse_down = True
+
+        if event.button == 3:
+            point = [event.xdata, event.ydata]
+            self._fill_dict(point)
+            self.plot_marker()
+
+    def _fill_dict(self, point):
+        """Add values to the dictionary storing marked points.
+        """
+
+        if self.dd.has_key(str(self.frame_num)):
+            self.dd[str(self.frame_num)].append(point)
+        else:
+            self.dd[str(self.frame_num)] = [point]
+
+    def button_release(self, event):
+        self.mouse_down = False
+
+    def motion_notify(self, event):
+        if self.mouse_down:
+            point = [event.xdata, event.ydata]
+            self._fill_dict(point)
+            self.plot_marker()
+
+    def save_data(self, fname):
+        import json
+        if not fname.endswith('.json'):
+            fname += '.json'
+        with open(fname, 'w') as fp:
+            json.dump(self.dd, fp)
+
+
+
 class CamPicker2D(object):
     """Pick points out from images.
     """
