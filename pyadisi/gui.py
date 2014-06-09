@@ -119,10 +119,9 @@ def imageviewer(images, crosshair=True):
     # finally show (not sure when we have to do this)
     imv.show()
 
-    # we store the data in a dictionary :)
+    # we store the data in a dictionary
     data = {}
-
-    def _fill_dict(current_index, point):
+    def fill_data(current_index, point):
         """Add values to the dictionary storing marked points.
         """
 
@@ -140,18 +139,17 @@ def imageviewer(images, crosshair=True):
         if in_scene and mouseclick.button() == 1:
             # .contains() requires a QtCore.QPointF, but we get a Point (subclassed from QtCore.QPointF) from the event
             mousePoint = vb.mapSceneToView(pos)
-            print('frame {2:4d} :   (x, y): ({0:.5f}, {1:.5f})'.format(mousePoint.x(), mousePoint.y(), imv.currentIndex))
-            _fill_dict(imv.currentIndex, (mousePoint.x(), mousePoint.y()))
-            sys.stdout.flush()
+            #print('frame {2:4d} :   (x, y): ({0:.5f}, {1:.5f})'.format(mousePoint.x(), mousePoint.y(), imv.currentIndex))
+            #sys.stdout.flush()
 
             # push the data into the dictionary
-
+            fill_data(imv.currentIndex, (mousePoint.x(), mousePoint.y()))
 
     proxy_click = pg.SignalProxy(imv.scene.sigMouseClicked, rateLimit=60, slot=mouseClicked)
 
 
     if crosshair:
-        #cross hair
+        # cross hair as intersection of two infinite lines
         vLine = pg.InfiniteLine(angle=90, movable=False)
         hLine = pg.InfiniteLine(angle=0, movable=False)
         imv.addItem(vLine, ignoreBounds=True)
