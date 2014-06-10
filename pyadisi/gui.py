@@ -22,19 +22,61 @@ import h5py
 pg.setConfigOptions(antialias=True)
 
 
-def _quickMinMax(data):
-    """We 'fix' this function so that we don't
-    need a numpy array...This is only called if
-    the images passed are a numpy array.
+def mrawloader(fname, dtype=np.uint16, h=1024, w=1024, flip=True):
+    """Load in an mraw as a memmaped numpy array.
+
+    Parameters
+    ----------
+    fname : str
+        Location of the binary file.
+    dtype : np.dtype, default=np.uint16
+        Type of stored binary data.
+    h : int, default=1024
+        Height of the images.
+    w : int, default=1024
+        Width of the images.
+    flip : bool, default=True
+        Whether to flip the image or not.
+
+    Returns
+    -------
+    images : np.ndarray (numpy.core.memmap.memmap)
+        Numpy memmaped array
+
+    Notes
+    -----
+    This assumes that the images are not color. The data about the image
+    dimensions and number of frames can be extracted from the .cih file
+    (see pyadisi.metadata.photron).
+
+    Examples
+    --------
+    >>> images = pyadisi.gui.mrawloader('~/Desktop/2014-05-29_000001.mraw')
     """
 
-    info = np.iinfo(data.dtype)
-    return info.min, info.max
+    images = np.memmap(fname, dtype, 'c').reshape(-1, h, w).swapaxes(1, 2)
+    return images
 
 
 def pimsloader(image_paths, flip=False):
     """Load in a stack of images using pims and ducktype it
     so that we have the required methods.
+
+    Parameters
+    ----------
+    image_paths : str
+        Path to the images to load.
+    flip : bool, default=False
+        Whether to flip the image or not.
+
+    Returns
+    -------
+    images : pims.image_sequence.ImageSequence
+        Images, but with required methods for the gui.
+
+    Example
+    -------
+    >>> images = pyadisi.gui.pimsload('~/Desktop/2014-05-29_000001/*/*.tif')
     """
 
     def flipper(img):
@@ -67,6 +109,28 @@ def pimsloader(image_paths, flip=False):
 
 def hdf5loader(fname, data_path):
     """Duck type on hdf5 to get the desired attributes...I cry.
+
+    Parameters
+    ----------
+    fname : str
+        The hdf5 file to load.
+    data_path : str
+        The local path inside the hdf5 file to the data.
+
+    Returns
+    -------
+    images : h5py._hl.dataset.Dataset
+        Images with the required methods for the gui.
+    fp : h5py._hl.files.File
+        Open hdf5 file (so fp.close() can be used to gracefully close it).
+
+    Notes
+    -----
+    This assumes the data is (time, y, x, c).
+
+    Example
+    -------
+    >>> images = pyadisi.gui.pimsload('~/Desktop/2014-05-29_000001.hdf5', 'raw')
     """
 
     fp = h5py.File(fname)
@@ -78,18 +142,29 @@ def hdf5loader(fname, data_path):
     return dat, fp
 
 
-def imageviewer(images, crosshair=True):
+def imageviewer(images, crosshair=True, xvals=None):
     """View a stack of images (basically, a 4D numpy array).
 
     Parameters
     ----------
-    images : thing...
-        bastardized pims, hdf5, or ideally a memmaped binary file.
+    images : image stack
+        Bastardized pims, hdf5, or ideally a memmaped binary file.
+    crosshair : bool, default=True
+        Whether to show the crosshair on the images.
+    xvals : np.ndarray, default=None
+        The time or frame count axis (can be negative for end triggers).
 
     Returns
     -------
-    viewer : pyqgraph thing
+    imv : pyadisi.pyqtgraph.imageview.ImageView.ImageView
         A neat viewer to investigate your image stack.
+    data : dict
+        The digitized locations, where keys are the frame number
+        and the (x, y) values are in a list.
+    proxy_chair : pyadisi.pyqtgraph.SignalProxy
+        Signal proxy for the crosshairs.
+    proxy_click : pyadisi.pyqtgraph.SignalProxy
+        Signal proxy for the mouse click events (how we digitize).
     """
 
     imv = pg.ImageView()
@@ -100,11 +175,15 @@ def imageviewer(images, crosshair=True):
     imv.ui.normBtn.hide()
 
     # fix quickMinMax...maybe
+    # We 'fix' this function so that we don't
+    # need a numpy array...This is only called if
+    # the images passed are not numpy ndarry.
     if not isinstance(images, np.ndarray):
-        imv.quickMinMax = _quickMinMax
+        imv.quickMinMax = lambda x: (np.iinfo(x.dtype).min, np.iinfo(x.dtype).max)
 
     # parameters to setImage
-    xvals = np.arange(images.shape[0])
+    if xvals is None:
+        xvals = np.arange(images.shape[0])
     axes = {'t':0, 'x':1, 'y':2, 'c':3}
 
     # after it is doctored up, give it some images
