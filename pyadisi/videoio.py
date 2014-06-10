@@ -349,7 +349,7 @@ def video_to_npy(fp, proc, nreadwrite, nframes, width, height, depth, dtype):
     return
 
 
-def load_video(filename, mmap_mode='c', pix_fmt='rgb24', nreadwrite=100, timing=False):
+def load_video(filename, mmap_mode='c', pix_fmt='rgb24', flip=False, nreadwrite=100, timing=False):
     """Load in a video file as a numpy array (if we have decoded the video before),
     or make this array (and a binary file on disk to store it).
 
@@ -365,6 +365,8 @@ def load_video(filename, mmap_mode='c', pix_fmt='rgb24', nreadwrite=100, timing=
         See np.memmap and np.load for more details.
     pix_fmt : 'rgb24' or 'rgba', default is 'rgb24'
         Pixel format of the video (passed to ffmpeg).
+    flip : bool, defaut is False
+        Whether to rotate the image.
     nreadwrite : int, default is 100
         Number of frames to hold in memory at any given time
         when making the numpy binary file.
@@ -420,5 +422,8 @@ def load_video(filename, mmap_mode='c', pix_fmt='rgb24', nreadwrite=100, timing=
 
         if timing:
             print('Elapsed time: {0:.3f} sec.'.format(time.time() - now))
+
+    if flip:
+        dat = dat.swapaxes(1, 2)
 
     return dat
