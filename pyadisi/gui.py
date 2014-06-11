@@ -58,7 +58,7 @@ def mrawloader(fname, dtype=np.uint16, h=1024, w=1024, flip=True):
     return images
 
 
-def pimsloader(image_paths, flip=False):
+def pimsloader(image_paths, flip=False, process_func=None):
     """Load in a stack of images using pims and ducktype it
     so that we have the required methods.
 
@@ -80,7 +80,7 @@ def pimsloader(image_paths, flip=False):
     """
 
     def flipper(img):
-        return img.swapaxes(0, 1)
+        return img[::-1, :]  # .swapaxes(0, 1)
 
     process_func = None if flip is False else flipper
     images = pims.ImageSequence(image_paths, process_func=process_func)
@@ -192,7 +192,7 @@ def imageviewer(images, crosshair=True, xvals=None):
     # we want to show the frame number on the image (eventually...)
     vb = imv.getView()
     label = pg.LabelItem(justify='right')
-    vb.addItem(label)
+    #vb.addItem(label)
     label.setText("<span style='font-size: 26pt'>frame = {0}".format(imv.currentIndex))
 
     # finally show (not sure when we have to do this)
