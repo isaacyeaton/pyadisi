@@ -181,10 +181,17 @@ def imageviewer(images, crosshair=True, xvals=None):
     if not isinstance(images, np.ndarray):
         imv.quickMinMax = lambda x: (np.iinfo(x.dtype).min, np.iinfo(x.dtype).max)
 
-    # parameters to setImage
-    if xvals is None:
-        xvals = np.arange(images.shape[0])
-    axes = {'t':0, 'x':1, 'y':2, 'c':3}
+    # parameters to setImage (if we have a video, single color, single gray scale)
+    if images.ndim == 4:
+        if xvals is None:
+            xvals = np.arange(images.shape[0])
+        axes = {'t':0, 'x':1, 'y':2, 'c':3}
+    elif images.ndim < 4:
+        xvals = None
+        axes = {'x': 0, 'y': 1, 'c': 2}
+    #elif images.ndim == 2:
+    #    xvals = None
+    #    axes = {'x': 0, 'y': 1}
 
     # after it is doctored up, give it some images
     imv.setImage(images, xvals=xvals, axes=axes, autoHistogramRange=True)
