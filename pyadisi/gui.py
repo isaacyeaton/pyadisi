@@ -58,6 +58,71 @@ def mrawloader(fname, dtype=np.uint16, h=1024, w=1024, flip=True):
     return images
 
 
+def mraw2tiff(savefolder, vid, interpolation='nearest', start=None, end=None, skip=None):
+    """Write and mraw file out as a .tiff.
+
+    Parameters
+    ----------
+    savefolder : path
+        Where to write tiff files out to
+    vid : np.ndarray or np.memmap
+        Video file, of shape (t, x, y)
+    start : int, default=None
+        First index to write from
+    end : int, default=None
+        Last index to write from
+    skip : int, default=1
+        Number of frames to skip when writing out
+
+    Notes
+    -----
+    This requires tifffile.py which can be downloaded from
+    http://www.lfd.uci.edu/~gohlke/code/tifffile.py
+
+    Examples
+    --------
+    >>> mraw2tiff('/home/isaac/Desktop/mrawex/', cam1.swapaxes(1, 2), start=60, end=70, skip=2)
+    """
+
+    #TODO raise an ImportError
+    try:
+        from tifffile import imsave
+    except ImportError, error:
+        err = '''
+              tifffile.py not installed. Download it from \n
+              http://www.lfd.uci.edu/~gohlke/code/tifffile.py'''
+        raise err
+
+    #from skimage.io import imsave
+    #from scipy.misc import imsave
+    #from matplotlib.pyplot import imsave
+
+    if start is None:
+        start = 0
+    if end is None:
+        end = vid.shape[0]
+    if skip is None:
+        skip = 1
+
+    # save as grayscale if only three dimensions
+    if vid.ndim == 3:
+        cmap = plt.cm.gray
+    else:
+        cmap = None  # color
+
+    if savefolder.endswith('/'):
+        savefolder = savefolder[:-1]
+
+    savebase = savefolder + '/{0:05d}.tiff'
+
+    for i in range(start, end, skip):
+        img = vid[i]
+        imsave(savebase.format(i), img)
+        #imsave(savebase.format(i), img, plugin='tiffile')
+        #imsave(savebase.format(i), img)
+        #plt.imsave(savebase.format(i), img, cmap=cmap, format='tiff')
+
+
 def pimsloader(image_paths, flip=False, process_func=None):
     """Load in a stack of images using pims and ducktype it
     so that we have the required methods.
