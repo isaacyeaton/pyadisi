@@ -232,8 +232,35 @@ def imageviewer(images, crosshair=True, xvals=None):
         Signal proxy for the mouse click events (how we digitize).
     """
 
-    imv = pg.ImageView()
-    imv.setWindowTitle('pyadisi is cool')
+    from pyqtgraph.Qt import QtCore, QtGui
+    import pyqtgraph as pg
+    pg.setConfigOptions(antialias=True)
+
+    ## Always start by initializing Qt (only once per application)
+    #app = QtGui.QApplication([])
+
+    ## Define a top-level widget to hold everything
+    win = QtGui.QWidget()
+    #win = QtGui.QMainWindow()
+    #win.resize(800, 800)
+
+
+    #layout = QtGui.QGridLayout()
+    #win.setLayout(layout)
+
+    # ImageView object to show video
+    imv = pg.ImageView(parent=win)
+
+    # add ImageView object to window
+    #win.setCentralWidget(imv)
+    #layout.addWidget(imv, 0, 0)
+
+    # display widget in new window
+    win.show()
+
+
+    # set the title of the window...
+    #imv.setWindowTitle('pyadisi is cool')
 
     # we are not ready to use these yet, wo we hide them :)
     imv.ui.roiBtn.hide()
@@ -268,7 +295,8 @@ def imageviewer(images, crosshair=True, xvals=None):
     label.setText("<span style='font-size: 26pt'>frame = {0}".format(imv.currentIndex))
 
     # finally show (not sure when we have to do this)
-    imv.show()
+    #imv.show()
+    print('here....')
 
     # we store the data in a dictionary
     data = {}
@@ -318,4 +346,10 @@ def imageviewer(images, crosshair=True, xvals=None):
     else:
         proxy_chair = None
 
-    return imv, data, proxy_chair, proxy_click
+
+    #win.show()
+
+    # finally, execute the application
+    #app.exec_()
+
+    return win, imv, data, proxy_chair, proxy_click
